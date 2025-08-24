@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-# Minimal YOLO webcam: opens a window and draws detections. That's it.
 
+# Minimal YOLO webcam: opens a window and draws detections. That's it.
 import argparse
 import cv2
 from ultralytics import YOLO
@@ -8,11 +7,11 @@ from ultralytics import YOLO
 def parse_args():
     p = argparse.ArgumentParser("Minimal YOLO webcam")
     p.add_argument("--weights", type=str, default="yolov8n.pt",
-                   help="Model weights (e.g., yolov8n.pt, yolov8s.pt, or your best.pt)")
+                   help="Model weights (e.g., yolov8n.pt, yolov8s.pt)")
     p.add_argument("--conf", type=float, default=0.35, help="Confidence threshold")
     p.add_argument("--iou", type=float, default=0.50, help="NMS IoU threshold")
     p.add_argument("--imgsz", type=int, default=640, help="Inference image size")
-    p.add_argument("--device", type=str, default="", help="''(auto), 'cuda:0', 'cpu', or 'mps'")
+    p.add_argument("--device", type=str, default="", help="''(auto), 'cuda:0', 'cpu'")
     p.add_argument("--cam", type=int, default=0, help="Webcam index (0,1,...)")
     return p.parse_args()
 
@@ -37,7 +36,7 @@ def main():
         if not ok:
             break
 
-        # run yolo on this frame; ultralytics handles bgr->rgb & letterbox internally
+        # run yolo on this frame; ultralytics handles bgr->rgb & numpy array -> torch tensor internally
         results = model.predict(
             source=frame,
             conf=args.conf,
