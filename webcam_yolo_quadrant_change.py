@@ -60,29 +60,30 @@ def box_iou_matrix(a_xyxy: np.ndarray, b_xyxy: np.ndarray) -> np.ndarray:
     inter = inter_w * inter_h
     union = a_area[:,None] + b_area[None,:] - inter
     return inter / np.clip(union, 0, None)
-#git
+
 #match current boxes to previous using IoU
 def match_by_iou(cur_boxes, cur_cls, prev_boxes, prev_cls, iou_thr=0.20):
     Nc, Np = cur_boxes.shape[0], prev_boxes.shape[0]
     out: [] = [None] * Nc
     if Nc == 0 or Np == 0:
         return out
-    iou = box_iou_matrix(cur_boxes, prev_boxes)
-    same = (cur_cls[:,None] == prev_cls[None,:])
-    iou = np.where(same, iou, 0.0)
-    best_prev = iou.argmax(axis=1)
-    best_iou  = iou.max(axis=1)
-    cands = [(int(i), int(best_prev[i]), float(best_iou[i])) for i in range(Nc) if best_iou[i] >= iou_thr]
+    iou = box_iou_matrix(cur_boxes, prev_boxes) #create the iou matrix for all pairs shape: (Nc, Np)
+    same = (cur_cls[:,None] == prev_cls[None,:]) #same[i,j] is True if cur_boxes[i] and prev_boxes[j] are same class
+    iou = np.where(same, iou, 0.0) #ignore different-class pairs by setting IoU to 0 for them. masking essentially
+    best_prev = iou.argmax(axis=1) #for each current box, the index of the previous box with the highest IoU (best_prev[i] = index of prev box with highest IoU for cur box i)
+    best_iou  = iou.max(axis=1) #for each current box, the highest IoU value (best_iou[i] = highest IoU value for cur box i)
+    cands = [(int(i), int(best_prev[i]), float(best_iou[i])) for i in range(Nc) if best_iou[i] >= iou_thr] 
+    #cands list is triple, (i, j, best_iou[i]) for each current box i that has a best IoU >= threshold, where j is the index of the matched previous box
     if not cands:
         return out
-    cands.sort(key=lambda t: t[2], reverse=True)
+    cands.sort(key=lambda t: t[2], reverse=True) #sorting candidates by IoU score best_iou[i] above (high to low)
     used_i, used_j = set(), set()
-    for i, j, _ in cands:
+    for i, j, _ in cands: #mapping current box i to previous box j. Skip if either is already used
         if i in used_i or j in used_j: continue
         out[i] = j
         used_i.add(i)
         used_j.add(j)
-    return out
+    return out # out is a list of length Nc, where out[i] is the index of the matched previous box for current box i, or None if no match
 
 def hybrid_match_iou_then_center(cur_boxes, cur_cls, prev_boxes, prev_cls,
                                  imgW, imgH, iou_thr=0.20,
