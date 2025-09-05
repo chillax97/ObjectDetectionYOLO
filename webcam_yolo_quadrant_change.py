@@ -124,12 +124,12 @@ def hybrid_match_iou_then_center(cur_boxes, cur_cls, prev_boxes, prev_cls,
 
 
 def main():
-    model = YOLO("yolo11x.pt")
-    model.to("cuda:0") 
+    model = YOLO("yolo11x.pt") #can be changed to lighter models like yolo11n.pt for less CPU load if no GPU available
+    model.to("cuda:0")  #move model to GPU if available
 
-    cap = cv2.VideoCapture("C:/Users/osman/Downloads/HighwayCV.mp4")
+    cap = cv2.VideoCapture("https://youtu.be/-bKmGYFLRwA?si=QCT0-mv5yjZCve5n") #can be changed to 0 or 1 for webcam input or any path to a video file
     if not cap.isOpened():
-        raise SystemExit("Cannot open webcam 0")
+        raise SystemExit("Cannot open source")
 
     fps = cap.get(cv2.CAP_PROP_FPS)
     delay = int(1000 / fps) if fps and fps > 0 else 1
