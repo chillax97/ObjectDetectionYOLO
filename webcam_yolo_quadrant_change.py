@@ -60,7 +60,7 @@ def box_iou_matrix(a_xyxy: np.ndarray, b_xyxy: np.ndarray) -> np.ndarray:
     inter = inter_w * inter_h
     union = a_area[:,None] + b_area[None,:] - inter
     return inter / np.clip(union, 0, None)
-
+#git
 #match current boxes to previous using IoU
 def match_by_iou(cur_boxes, cur_cls, prev_boxes, prev_cls, iou_thr=0.20):
     Nc, Np = cur_boxes.shape[0], prev_boxes.shape[0]
