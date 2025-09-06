@@ -127,7 +127,7 @@ def main():
     model = YOLO("yolo11x.pt") #can be changed to lighter models like yolo11n.pt for less CPU load if no GPU available
     model.to("cuda:0")  #move model to GPU if available
 
-    cap = cv2.VideoCapture("https://youtu.be/-bKmGYFLRwA?si=QCT0-mv5yjZCve5n") #can be changed to 0 or 1 for webcam input or any path to a video file
+    cap = cv2.VideoCapture("C:/Users/osman/Downloads/HighwayCV.mp4") #can be changed to 0 or 1 for webcam input or any path to a video file
     if not cap.isOpened():
         raise SystemExit("Cannot open source")
 
